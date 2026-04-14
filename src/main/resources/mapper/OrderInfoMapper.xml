@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nyw.cateringsystem.repository.OrderInfoMapper">
+    <sql id="Base_Column_List">
+        id, order_id, dish_id, dish_name, price, quantity, subtotal
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultType="com.nyw.cateringsystem.bean.OrderInfo">
+        select
+        <include refid="Base_Column_List" />
+        from t_order_info
+        where id = #{id}
+    </select>
+
+    <select id="selectAll" resultType="com.nyw.cateringsystem.bean.OrderInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order_info
+    </select>
+
+    <select id="selectByOrderId" parameterType="long" resultType="com.nyw.cateringsystem.bean.OrderInfo">
+        select
+        <include refid="Base_Column_List" />
+        from t_order_info
+        where order_id = #{orderId}
+    </select>
+
+    <select id="selectByDishId" resultType="com.nyw.cateringsystem.bean.OrderInfo">
+        select
+        <include refid="Base_Column_List" />
+        from t_order_info
+        where dish_id = #{dishId}
+    </select>
+    <select id="selectByOrderAndDishId" resultType="com.nyw.cateringsystem.bean.OrderInfo">
+        select
+        <include refid="Base_Column_List" />
+        from t_order_info
+        where order_id = #{orderId} and dish_id = #{dishId}
+    </select>
+
+    <delete id="batchDelete" parameterType="java.lang.Long">
+        delete from t_order_info
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsert">
+        insert into t_order_info
+        (order_id,dish_id,dish_name,price,quantity,subtotal)
+        values
+        <foreach collection="orderInfos" item="orderInfo" separator=",">
+            <trim prefix="(" suffixOverrides="," suffix=")">
+              <if test="orderInfo.orderId != null">
+                #{orderInfo.orderId},
+              </if>
+              <if test="orderInfo.dishId != null">
+                #{orderInfo.dishId},
+              </if>
+              <if test="orderInfo.dishName != null">
+                #{orderInfo.dishName},
+              </if>
+              <if test="orderInfo.price != null">
+                #{orderInfo.price},
+              </if>
+              <if test="orderInfo.quantity != null">
+                #{orderInfo.quantity},
+              </if>
+              <if test="orderInfo.subtotal != null">
+                #{orderInfo.subtotal},
+              </if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="com.nyw.cateringsystem.bean.OrderInfo">
+        update t_order_info
+        <set>
+          <if test="orderId != null">
+            order_id = #{orderId},
+          </if>
+          <if test="dishId != null">
+            dish_id = #{dishId},
+          </if>
+          <if test="dishName != null and dishName != ''">
+            dish_name = #{dishName},
+          </if>
+          <if test="price != null">
+            price = #{price},
+          </if>
+          <if test="quantity != null">
+            quantity = #{quantity},
+          </if>
+          <if test="subtotal != null">
+            subtotal = #{subtotal},
+          </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="batchUpdate">
+        update t_order_info
+        set
+            order_id = case id
+                <foreach collection="orderInfos" item="orderInfo">
+                    <if test="orderInfo.orderId != null">
+                        when #{orderInfo.id} then #{orderInfo.orderId}
+                    </if>
+                </foreach>
+                when 0 then order_id
+                else order_id
+            end ,
+            dish_id = case id
+                <foreach collection="orderInfos" item="orderInfo">
+                    <if test="orderInfo.dishId != null">
+                        when #{orderInfo.id} then #{orderInfo.dishId}
+                    </if>
+                </foreach>
+                when 0 then dish_id
+                else dish_id
+            end ,
+            dish_name = case id
+                <foreach collection="orderInfos" item="orderInfo">
+                    <if test="orderInfo.dishName != null and orderInfo.dishName != ''">
+                        when #{orderInfo.id} then #{orderInfo.dishName}
+                    </if>
+                </foreach>
+                when 0 then dish_name
+                else dish_name
+            end ,
+            price = case id
+                <foreach collection="orderInfos" item="orderInfo">
+                    <if test="orderInfo.price != null">
+                        when #{orderInfo.id} then #{orderInfo.price}
+                    </if>
+                </foreach>
+                when 0 then price
+                else price
+            end ,
+            quantity = case id
+                <foreach collection="orderInfos" item="orderInfo">
+                    <if test="orderInfo.quantity != null">
+                        when #{orderInfo.id} then #{orderInfo.quantity}
+                    </if>
+                </foreach>
+                when 0 then quantity
+                else quantity
+            end ,
+            subtotal = case id
+                <foreach collection="orderInfos" item="orderInfo">
+                    <if test="orderInfo.subtotal != null">
+                        when #{orderInfo.id} then #{orderInfo.subtotal}
+                    </if>
+                </foreach>
+                when 0 then subtotal
+                else subtotal
+            end
+        where id in
+            <foreach collection="orderInfos" item="orderInfo" open="(" separator="," close=")">
+                #{orderInfo.id}
+            </foreach>
+    </update>
+</mapper>

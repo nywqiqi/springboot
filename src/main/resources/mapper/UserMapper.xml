@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nyw.cateringsystem.repository.UserMapper">
+
+    <sql id="selectBody">
+        select * from t_user
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user(staff_id,username,password,role,name,phone,email)
+        values (#{staffId},#{username},#{password},#{role},#{name},#{phone},#{email})
+    </insert>
+
+    <update id="update">
+        update t_user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="staffId != null and staffId != ''">
+                staff_id = #{staffId},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="role != null and role != ''">
+                role = #{role},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email}
+            </if>
+        </trim>
+        <choose>
+            <when test="id != null and id !=''">
+                where id = #{id}
+            </when>
+        </choose>
+    </update>
+
+    <delete id="deleteByIds" parameterType="long">
+        delete from t_user
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByStaffIdOrUsername" resultType="com.nyw.cateringsystem.bean.User">
+        <include refid="selectBody"/>
+        <choose>
+            <when test="staffId != null and staffId != ''">
+                where staff_id = #{staffId}
+            </when>
+            <when test="username != null and username != ''">
+                where username = #{username}
+            </when>
+        </choose>
+    </select>
+
+    <select id="selectById" resultType="com.nyw.cateringsystem.bean.User">
+        <include refid="selectBody"/>
+        where id = #{id}
+    </select>
+    <select id="selectAll" resultType="com.nyw.cateringsystem.bean.User">
+        <include refid="selectBody"/>
+    </select>
+    <select id="selectByRole" resultType="com.nyw.cateringsystem.bean.User">
+        <include refid="selectBody"/>
+        where role = #{role}
+    </select>
+
+
+</mapper>

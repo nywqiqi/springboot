@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nyw.cateringsystem.repository.DishMapper">
+
+    <sql id="selectBody">
+        select * from t_dish
+    </sql>
+    
+    <sql id="availableStatus">
+        and available = true
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into t_dish
+        values (null,#{name},#{price},#{description},#{category},#{available},#{imageUrl},#{salesCount})
+    </insert>
+    <update id="updateDishById" parameterType="com.nyw.cateringsystem.bean.Dish">
+        update t_dish
+        set name = #{name},
+            price = #{price},
+            description = #{description},
+            category = #{category},
+            available = #{available},
+            image_url = #{imageUrl},
+            sales_count = #{salesCount}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByIds" parameterType="long">
+        delete from t_dish
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByPrimaryKey" resultType="com.nyw.cateringsystem.bean.Dish">
+        <include refid="selectBody"/>
+        where id = #{id} and available = true
+    </select>
+
+    <select id="selectAll" resultType="com.nyw.cateringsystem.bean.Dish" parameterType="boolean">
+        <include refid="selectBody"/>
+        <where>
+            <if test="isConsumer != null and isConsumer == true">
+                available = true
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByName" resultType="com.nyw.cateringsystem.bean.Dish">
+        <include refid="selectBody"/>
+        where name like "%"#{name}"%" and available = true
+    </select>
+
+    <select id="selectByCategory" resultType="com.nyw.cateringsystem.bean.Dish">
+        <include refid="selectBody"/>
+        where category like "%"#{category}"%" and available = true
+    </select>
+</mapper>

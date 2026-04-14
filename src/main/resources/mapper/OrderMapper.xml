@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nyw.cateringsystem.repository.OrderMapper">
+    <sql id="selectBody">
+        select * from t_order
+    </sql>
+
+    <select id="selectAll" resultType="com.nyw.cateringsystem.bean.Order">
+        <include refid="selectBody"/>
+    </select>
+
+    <select id="selectById" resultType="com.nyw.cateringsystem.bean.Order">
+        <include refid="selectBody"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectByOrderNumber" resultType="com.nyw.cateringsystem.bean.Order">
+        <include refid="selectBody"/>
+        where order_number = #{orderNumber}
+    </select>
+
+    <select id="selectByTableId" resultType="com.nyw.cateringsystem.bean.Order">
+        <include refid="selectBody"/>
+        where table_id = #{tableId}
+    </select>
+
+    <delete id="deleteByIds" parameterType="long">
+        delete from t_order
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nyw.cateringsystem.bean.Order" useGeneratedKeys="true">
+        insert into t_order (order_number, table_id, order_status, total_amount, payment_method, pay_time, actual_amount)
+        values (#{orderNumber},#{tableId},#{orderStatus},#{totalAmount},#{paymentMethod},#{payTime},#{actualAmount})
+    </insert>
+
+    <update id="updateById" parameterType="com.nyw.cateringsystem.bean.Order">
+        update t_order
+        <set>
+            <if test="orderNumber != null and orderNumber != ''">
+                order_number = #{orderNumber},
+            </if>
+            <if test="tableId != null and tableId != ''">
+                table_id = #{tableId},
+            </if>
+            <if test="orderStatus != null and orderStatus != ''">
+                order_status = #{orderStatus},
+            </if>
+            <if test="totalAmount != null and totalAmount != ''">
+                total_amount = #{totalAmount},
+            </if>
+            <if test="paymentMethod != null and paymentMethod != ''">
+                payment_method = #{paymentMethod},
+            </if>
+            <if test="payTime != null">
+                pay_time = #{payTime},
+            </if>
+            <if test="actualAmount != null and actualAmount != ''">
+                actual_amount = #{actualAmount}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
