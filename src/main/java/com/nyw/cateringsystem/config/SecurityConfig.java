@@ -28,6 +28,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()  // 开发环境禁用 CSRF
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().permitAll()  // 所有请求无需登录
                 )
                 .httpBasic().disable()  // 禁用 Basic Auth

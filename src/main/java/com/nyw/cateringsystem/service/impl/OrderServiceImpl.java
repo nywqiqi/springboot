@@ -255,6 +255,13 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(StatusEnum.COMPLETED.name());
         order.setPayTime(new Date());
 
-        return orderMapper.updateById(order) > 0;
+        orderMapper.updateById(order);
+        // 结账后释放桌面
+        TableInfo tableInfo = TableInfo.builder()
+                .id(order.getTableId())
+                .tableStatus(StatusEnum.FREE.name())
+                .build();
+        tableInfoMapper.updateByID(tableInfo);
+        return true;
     }
 }

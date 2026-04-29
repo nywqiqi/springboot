@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: catering-system
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/catering_system
+    username: root
+    password: 123456
+  jackson:
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+
+mybatis:
+  configuration:
+    lazy-loading-enabled: true
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.nyw.cateringsystem.bean
+  mapper-locations: classpath:/mapper/*.xml
+
+logging:
+  level:
+    com.nyw.cateringsystem.repository: TRACE
+    com.nyw.cateringsystem.converter: TRACE
+    com.nyw.cateringsystem.service.impl.DishServiceImpl: TRACE
+
+# spring.security.user.name=admin
+# spring.security.user.password=$2a$10$Sxw/wNx6dwqgZbQ.TVhPCOi7uJUkSUA1K7NyQhKOmSiZsgNx6jUrW
+# spring.security.user.roles=ADMIN
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    enabled: true
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
