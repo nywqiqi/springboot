@@ -20,7 +20,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12); // 12 是强度（log rounds），默认 10，建议 10～12
+        return new BCryptPasswordEncoder(12);
     }
 
     @Bean

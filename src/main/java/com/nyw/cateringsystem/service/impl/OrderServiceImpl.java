@@ -222,15 +222,6 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderStatus() != null && !order.getOrderStatus().isEmpty()) {
             order.setOrderStatus(order.getOrderStatus().toUpperCase());
         }
-        if(order.getOrderStatus() == null || order.getOrderStatus().isEmpty()) {
-            if(orderDTO.getActualAmount() != null && orderDTO.getActualAmount().compareTo(BigDecimal.ZERO) > 0) {
-                order.setOrderStatus(StatusEnum.COMPLETED.name());
-            }
-        }
-        //根据是否结账自动赋值payTime
-        if(orderDTO.getActualAmount() != null && orderDTO.getActualAmount().compareTo(BigDecimal.ZERO) > 0) {
-            order.setPayTime(new Date());
-        }
 
         TableInfo tableInfo = tableInfoMapper.selectById(order.getTableId());
 
@@ -238,6 +229,31 @@ public class OrderServiceImpl implements OrderService {
         if (orderDTO.getTableId() != null && !orderTemp.getTableId().equals(orderDTO.getTableId())) {
             order.setOrderNumber(OrderUtils.generateOrderNum(tableInfo.getTableNumber()));
         }
+
+        return orderMapper.updateById(order) > 0;
+    }
+
+    @Override
+    public boolean checkout(Long id, OrderDTO orderDTO) {
+        Order order = orderMapper.selectById(id);
+        if (order == null) {
+            throw new SourceNotFoundException("订单不存在");
+        }
+        if (orderDTO.getActualAmount() == null || orderDTO.getActualAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("实际支付金额不能为空或小于等于0");
+        }
+        if (orderDTO.getPaymentMethod() == null || orderDTO.getPaymentMethod().isEmpty()) {
+            throw new IllegalArgumentException("支付方式不能为空");
+        }
+        String paymentMethod = orderDTO.getPaymentMethod();
+        if (!"现金".equals(paymentMethod) && !"微信".equals(paymentMethod) && !"支付宝".equals(paymentMethod)) {
+            throw new IllegalArgumentException("支付方式输入有误(必须为现金、微信和支付宝中的一种)");
+        }
+
+        order.setActualAmount(orderDTO.getActualAmount());
+        order.setPaymentMethod(paymentMethod);
+        order.setOrderStatus(StatusEnum.COMPLETED.name());
+        order.setPayTime(new Date());
 
         return orderMapper.updateById(order) > 0;
     }

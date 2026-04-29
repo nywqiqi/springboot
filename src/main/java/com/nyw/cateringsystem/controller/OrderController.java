@@ -56,4 +56,9 @@ public class OrderController {
     public R<Boolean> update(@PathVariable Long id, @RequestBody OrderDTO orderDTO) {
         return R.ok(orderService.updateOrder(id, orderDTO));
     }
+
+    @PostMapping("/orders/{id}/checkout")
+    public R<Boolean> checkout(@PathVariable Long id, @RequestBody OrderDTO orderDTO) {
+        return R.ok(orderService.checkout(id, orderDTO));
+    }
 }

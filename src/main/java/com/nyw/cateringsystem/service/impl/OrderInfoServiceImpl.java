@@ -71,22 +71,26 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public PageInfo<OrderInfoDTO> findByTableNum(int pageNum, int pageSize, String tableNum) {
+        //校验桌号输入信息
         if(tableNum == null || tableNum.isEmpty()) {
             throw new IllegalArgumentException("桌号为空或输入有误");
         }
         if (!tableNum.matches("^[a-zA-Z][0-9]{2}$")) {
             throw new IllegalArgumentException("桌号为空或输入有误");
         }
+        //根据桌号模糊查询桌面
         List<TableInfo> tableInfos = tableInfoMapper.selectByTableNum(tableNum);
         if (tableInfos.isEmpty()) {
             throw new IllegalArgumentException("桌号为空或输入有误");
         }
+        //查询指定桌号的桌面id
         Long eligibleTableId = 0L;
         for (TableInfo tableInfo : tableInfos) {
             if(tableInfo.getTableNumber().equals(tableNum.toUpperCase())) {
                 eligibleTableId = tableInfo.getId();
             }
         }
+        //查询当前桌面的订单
         List<Order> orders = orderMapper.selectByTableId(eligibleTableId);
         Long orderId = 0L;
         if(!orders.isEmpty()) {

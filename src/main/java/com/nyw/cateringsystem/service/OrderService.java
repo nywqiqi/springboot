@@ -46,4 +46,9 @@ public interface OrderService {
      * 根据id更新订单信息
      **/
     boolean updateOrder(Long id, OrderDTO orderDTO);
+
+    /**
+     * 结账：更新支付信息并将订单状态改为已完成
+     **/
+    boolean checkout(Long id, OrderDTO orderDTO);
 }
